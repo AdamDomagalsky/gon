@@ -31,7 +31,7 @@ var counterOps = []counterOp{
 	},
 	{
 		name:      "Atomic",
-		increment: func() { counters.atmoic.value.Add(1) },
+		increment: func() { counters.atmoic.Increment() },
 		get:       func() uint64 { return counters.atmoic.Get() },
 	},
 	{
