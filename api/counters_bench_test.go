@@ -5,66 +5,6 @@ import (
 	"testing"
 )
 
-// var counters = NewAllCounters()
-
-// // func BenchmarkChannelWriteRead(b *testing.B) {
-// // 	// go counters.channel.run()
-// // 	for i := 0; i < b.N; i++ {
-// // 		counters.channel.IncrementAndGet()
-// // 	}
-// // }
-
-// func BenchmarkSemaphoreWrite(b *testing.B) {
-
-// 	ctx := context.Background()
-// 	for i := 0; i < b.N; i++ {
-// 		if err := counters.semaphore.Acquire(ctx, 1); err != nil {
-// 			b.Fatal(err)
-// 		}
-// 		counters.semaphore.value++
-// 		counters.semaphore.Release(1)
-// 	}
-// }
-
-// func BenchmarkSemaphoreRead(b *testing.B) {
-// 	ctx := context.Background()
-// 	for i := 0; i < b.N; i++ {
-// 		if err := counters.semaphore.Acquire(ctx, 1); err != nil {
-// 			b.Fatal(err)
-// 		}
-// 		_ = counters.semaphore.value
-// 		counters.semaphore.Release(1)
-// 	}
-// }
-
-// func BenchmarkAtomicWrite(b *testing.B) {
-// 	for i := 0; i < b.N; i++ {
-// 		counters.atmoic.value.Add(1)
-// 	}
-// }
-
-// func BenchmarkMutexWrite(b *testing.B) {
-// 	for i := 0; i < b.N; i++ {
-// 		counters.mutex.Lock()
-// 		counters.mutex.value++
-// 		counters.mutex.Unlock()
-// 	}
-// }
-
-// func BenchmarkAtomicRead(b *testing.B) {
-// 	for i := 0; i < b.N; i++ {
-// 		_ = counters.atmoic.value.Load()
-// 	}
-// }
-
-// func BenchmarkMutexRead(b *testing.B) {
-// 	for i := 0; i < b.N; i++ {
-// 		counters.mutex.Lock()
-// 		_ = counters.mutex.value
-// 		counters.mutex.Unlock()
-// 	}
-// }
-
 var counters = NewAllCounters()
 
 type counterOp struct {
@@ -92,7 +32,7 @@ var counterOps = []counterOp{
 	{
 		name:      "Atomic",
 		increment: func() { counters.atmoic.value.Add(1) },
-		get:       func() uint64 { return counters.atmoic.value.Load() },
+		get:       func() uint64 { return counters.atmoic.Get() },
 	},
 	{
 		name:      "Semaphore",
