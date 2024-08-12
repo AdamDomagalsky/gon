@@ -1,6 +1,6 @@
 package api
 
-// go test ./... -v -run TestCounterHandlers/Counter5 -race;
+// go test ./... -v -run TestCounterHandlers/CounterScopedValue -race;
 import (
 	"net/http"
 	"net/http/httptest"
@@ -19,32 +19,32 @@ func TestCounterHandlers(t *testing.T) {
 		{
 			name:       "Basic",
 			iterations: 99999,
-			endpoint:   "/counter1",
-		},
-		{
-			name:       "Mutex",
-			iterations: 99999,
-			endpoint:   "/counter2",
-		},
-		{
-			name:       "Atomic",
-			iterations: 99999,
-			endpoint:   "/counter3",
-		},
-		{
-			name:       "Semaphore",
-			iterations: 99999,
-			endpoint:   "/counter4",
+			endpoint:   "/api/v1/counter/bad",
 		},
 		{
 			name:       "Scoped",
 			iterations: 99999,
-			endpoint:   "/counter5",
+			endpoint:   "/api/v1/counter/scoped",
+		},
+		{
+			name:       "Mutex",
+			iterations: 99999,
+			endpoint:   "/api/v1/counter/mutex",
+		},
+		{
+			name:       "Atomic",
+			iterations: 99999,
+			endpoint:   "/api/v1/counter/atomic",
+		},
+		{
+			name:       "Semaphore",
+			iterations: 99999,
+			endpoint:   "/api/v1/counter/semaphore",
 		},
 		{
 			name:       "Channel",
 			iterations: 999999,
-			endpoint:   "/counter6",
+			endpoint:   "/api/v1/counter/channel",
 		},
 		// Add more test cases here for other endpoints if needed
 	}
@@ -61,7 +61,7 @@ func coreIteration(t *testing.T, iterations int, endpoint string) []int {
 	// Create a new server instance
 	server := NewServer(&Config{Port: "8080"})
 
-	// Create a test request to the /counter2 endpoint
+	// Create a test request to the /CounterMutex endpoint
 	req, err := http.NewRequest("GET", endpoint, nil)
 	if err != nil {
 		t.Fatal(err)

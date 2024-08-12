@@ -7,15 +7,9 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
-	"sync/atomic"
 	"syscall"
 	"time"
-
-	"golang.org/x/sync/semaphore"
 )
-type Config struct {
-	Port string
-}
 
 type Server struct {
 	router   *http.ServeMux
@@ -23,32 +17,13 @@ type Server struct {
 	counters *Counters
 }
 
-func NewServer(config *Config) *Server {
-	Counter5 := Counter5(0)
-	counters := &Counters{
-		c1: &Counter1{value: 0},
-		c2: &Counter2{value: 0},
-		c3: &Counter3{value: atomic.Uint64{}},
-		c4: &Counter4{
-			Weighted: semaphore.NewWeighted(1),
-			value:    0,
-		},
-		c5: Counter5,
-		c6: &Counter6{
-			value:           0,
-			incrementAndGet: make(chan chan int64),
-		},
-	}
-	go counters.c6.run()
+type Config struct {
+	Port string
+}
 
-	server := &Server{
-		router:   http.NewServeMux(),
-		config:   config,
-		counters: counters,
-	}
-	server.setupRoutes()
-
-	return server
+func (s *Server) HealthCheckHandler(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("OK"))
 }
 
 func (s *Server) Start() error {
@@ -81,7 +56,15 @@ func (s *Server) Start() error {
 	return nil
 }
 
-func (s *Server) HealthCheckHandler(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("OK"))
+func NewServer(config *Config) *Server {
+	counters := NewAllCounters()
+
+	server := &Server{
+		router:   http.NewServeMux(),
+		config:   config,
+		counters: counters,
+	}
+	server.setupRoutes()
+
+	return server
 }
